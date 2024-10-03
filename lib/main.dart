@@ -8,6 +8,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: FadingTextAnimation(),
     );
   }
@@ -21,10 +22,18 @@ class FadingTextAnimation extends StatefulWidget {
 class _FadingTextAnimationState extends State<FadingTextAnimation> {
   bool _isVisible = true;
 
-  void toggleVisibility() {
-    setState(() {
-      _isVisible = !_isVisible;
-      print('Visibility toggled: $_isVisible');
+  @override
+  void initState() {
+    super.initState();
+    _startFadeAnimation();
+  }
+
+  void _startFadeAnimation() {
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        _isVisible = !_isVisible;
+      });
+      _startFadeAnimation(); // Continue toggling to create a loop
     });
   }
 
@@ -39,15 +48,11 @@ class _FadingTextAnimationState extends State<FadingTextAnimation> {
         child: AnimatedOpacity(
           opacity: _isVisible ? 1.0 : 0.0,
           duration: Duration(seconds: 1),
-          child: const Text(
+          child: Text(
             'Hello, Flutter!',
             style: TextStyle(fontSize: 24, color: Colors.black),
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: toggleVisibility,
-        child: Icon(Icons.play_arrow),
       ),
     );
   }
